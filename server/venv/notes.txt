@@ -1,0 +1,5 @@
+windows   venv\Scripts\activate
+
+to install Flask
+
+windows py -m pip install Flask
