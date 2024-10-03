@@ -1,8 +1,10 @@
 from flask import Flask, request
 import json
 from config import db 
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # warning, this disables CORS policy
 
 @app.get("/")
 def home():
@@ -27,14 +29,18 @@ def fix_id(obj):
 
 @app.get("/api/products")
 def read_products():
-    return json.dumps(products)
+    cursor = db.catalog.find({})
+    catalog = []
+    for prod in cursor:
+        catalog.append(fix_id(prod))
+
+    return json.dumps(catalog)
 
 @app.post("/api/products")
 def save_products():
     item = request.get_json()
     #products.append(item)
-    db.products.insert_one(item)
-    print(item)
+    db.catalog.insert_one(item)
     return json.dumps(fix_id(item))
 
 @app.put("/api/products/<int:index>")
@@ -45,5 +51,29 @@ def update_products(index):
         return json.dumps(update_item)
     else:
         return "That index does not exist"
-app.run(debug=True)
 
+
+
+@app.post("/api/coupons")
+def save_coupons():
+    item = request.get_json()
+    db.catalog.insert_one(item)
+    return json.dumps(fix_id(item))
+
+
+@app.get("/api/coupons")
+def read_coupons():
+    cursor = db.catalog.find({})
+    inventory = []
+    for coup in cursor:
+        inventory.append(fix_id(coup))
+    
+    return json.dumps(inventory)
+
+
+
+
+
+
+
+app.run(debug=True)
