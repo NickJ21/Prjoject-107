@@ -32,7 +32,8 @@ def read_products():
     cursor = db.catalog.find({})
     catalog = []
     for prod in cursor:
-        catalog.append(fix_id(prod))
+        if "price" in prod:
+            catalog.append(fix_id(prod))
 
     return json.dumps(catalog)
 
@@ -57,13 +58,13 @@ def update_products(index):
 @app.post("/api/coupons")
 def save_coupons():
     item = request.get_json()
-    db.catalog.insert_one(item)
+    db.coupons.insert_one(item)
     return json.dumps(fix_id(item))
 
 
 @app.get("/api/coupons")
 def read_coupons():
-    cursor = db.catalog.find({})
+    cursor = db.coupons.find({})
     inventory = []
     for coup in cursor:
         inventory.append(fix_id(coup))
